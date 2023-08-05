@@ -1,4 +1,4 @@
-const Contacts = require('../models/contacts.js');
+const Contacts = require('../models/contacts');
 
 const contactsController = {
     async getContacts(req, res) {
@@ -19,7 +19,7 @@ const contactsController = {
             console.log(err);
             res.status(400).json(err);
         }
-   }
+    },
     
 
 };
