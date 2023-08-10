@@ -7,18 +7,23 @@ const {
     deleteContact,
     updateContact,
     addToFavorites,
-} = require('../../controllers/contacts/contacts')
+} = require('../../controllers/contacts/contacts');
 
+//* CONTACT ROUTES
 router.route('/')
     .get(getContacts)
     .post(createContact);
-
 router.route('/:contactId')
     .get(getSingleContact)
     .delete(deleteContact)
     .put(updateContact);
+router.route('/:contactId/favorite').patch(addToFavorites);
 
-router.route('/:contactId/favorite')
-    .patch(addToFavorites);
+//* USER ROUTES
+router.route('/users/signup').post();
+router.route('/users/login').post();
+router.route('users/logout').post();
+router.route('users/current').post();
+router.route('/:userId/users').patch();
 
 module.exports = router;
