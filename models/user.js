@@ -24,12 +24,18 @@ const UsersSchema = new Schema(
         owner: {
             type: Schema.Types.ObjectId,
             ref: 'user',
-        }
+        },
+        //! Sytax to remove version key
+        // {versionKey: false},
     }
 );
 
-const Users = model('users', UsersSchema);
+UsersSchema.methods.checkPassword = async function(loginPW){
+    return bcrypt.compare(loginPW, this.password)
+}
 
-module.exports = Users;
+const User = model('users', UsersSchema);
+
+module.exports = User;
 
 
