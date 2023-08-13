@@ -17,7 +17,5 @@ const usersControllers = {
       res.json(err);
     }
     },
-
 };
-
 module.exports = usersControllers;
