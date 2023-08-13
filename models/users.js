@@ -17,10 +17,10 @@ const UsersSchema = new Schema(
             enum: ["starter", "pro", "business"],
             default: "starter"
         },
-        token: {
-            type: String,
-            default: null,
-        },
+        // token: {
+        //     type: String,
+        //     default: null,
+        // },
         owner: {
             type: Schema.Types.ObjectId,
             ref: 'user',
@@ -34,7 +34,7 @@ UsersSchema.methods.checkPassword = async function(loginPW){
     return bcrypt.compare(loginPW, this.password)
 }
 
-const User = model('users', UsersSchema);
+const User = model('user', UsersSchema);
 
 module.exports = User;
 

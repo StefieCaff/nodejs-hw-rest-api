@@ -9,6 +9,10 @@ const {
     addToFavorites,
 } = require('../../controllers/contacts/contacts');
 
+const {
+    signup,
+} = require('../../controllers/users/users');
+
 //* CONTACT ROUTES
 router.route('/')
     .get(getContacts)
@@ -20,7 +24,7 @@ router.route('/:contactId')
 router.route('/:contactId/favorite').patch(addToFavorites);
 
 //* USER ROUTES
-router.route('/users/signup').post();
+router.route('/users/signup').post(signup);
 router.route('/users/login').post();
 router.route('users/logout').post();
 router.route('users/current').post();
