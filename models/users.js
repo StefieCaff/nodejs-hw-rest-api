@@ -30,9 +30,9 @@ const UsersSchema = new Schema(
     }
 );
 
-UsersSchema.methods.checkPassword = async function(loginPW){
+UsersSchema.methods.comparePassword = async function (loginPW) {
     return bcrypt.compare(loginPW, this.password)
-}
+};
 
 const User = model('user', UsersSchema);
 

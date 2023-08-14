@@ -11,6 +11,7 @@ const {
 
 const {
     signup,
+    login,
 } = require('../../controllers/users/users');
 
 //* CONTACT ROUTES
@@ -25,7 +26,7 @@ router.route('/:contactId/favorite').patch(addToFavorites);
 
 //* USER ROUTES
 router.route('/users/signup').post(signup);
-router.route('/users/login').post();
+router.route('/users/login').post(login);
 router.route('users/logout').post();
 router.route('users/current').post();
 router.route('/:userId/users').patch();
