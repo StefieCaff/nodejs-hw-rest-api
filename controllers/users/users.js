@@ -39,12 +39,28 @@ const usersControllers = {
                 expiresIn: '1h',
             })
             req.session.userToken = token;
+            console.log('token', req.session.userToken);
             res.status(200).json({token});
 
         } catch (err) {
             console.log(err);
             res.json(err);
         }
+    },
+
+    async logout(req, res) {
+        try {
+            if (req.session.userToken) {
+                req.session.destroy(() => {
+                res.status(204).json({message: "You have been logged out"});
+                })
+            } else {
+                res.status(401).json({message: 'Unauthorized'})
+            }
+        } catch (err) {
+            console.log(err);
+            res.json(err);
+        };
     },
 };
 module.exports = usersControllers;
