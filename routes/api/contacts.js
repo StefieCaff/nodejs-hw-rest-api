@@ -1,5 +1,5 @@
 const router = require('express').Router();
-
+const auth = require('../../utils/auth');
 const {
     getContacts,
     createContact,
@@ -16,13 +16,13 @@ const {
 
 //* CONTACT ROUTES
 router.route('/')
-    .get(getContacts)
-    .post(createContact);
+    .get(auth, getContacts)
+    .post(auth, createContact);
 router.route('/:contactId')
-    .get(getSingleContact)
-    .delete(deleteContact)
-    .put(updateContact);
-router.route('/:contactId/favorite').patch(addToFavorites);
+    .get(auth, getSingleContact)
+    .delete(auth, deleteContact)
+    .put(auth, updateContact);
+router.route('/:contactId/favorite').patch(auth, addToFavorites);
 
 //* USER ROUTES
 router.route('/users/signup').post(signup);
