@@ -3,13 +3,17 @@ const Contacts = require('../../models/contacts');
 
 const contactsController = {
     async getContacts(req, res) {
-         const { page = 1, limit = 20 } = req.query;
+        const { page = 1, limit = 20, favorite } = req.query;
+        const filter = favorite === true ? { isfavorite: true } : {};
         try {
-            const contacts = await Contacts.find()
+
+           const query = Contacts.find(filter)
                 .limit(limit * 1)
-                .skip((page - 1) * limit)
-                .exec();
-            const count = await Contacts.countDocuments();
+                .skip((page - 1) * limit);
+                
+            const count = await Contacts.countDocuments(filter)
+            const contacts = await query.exec();
+
             res.status(200).json({
                 contacts,
                 totalPages: Math.ceil(count / limit),
