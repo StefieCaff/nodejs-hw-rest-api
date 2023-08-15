@@ -25,7 +25,7 @@ const usersControllers = {
     async login(req, res) {
         try {
             const { email, password } = req.body;
-            const validUser = await User.findOne({ email: email })
+            const validUser = await User.findOne({ email: email });
             if (!validUser) {
                 res.status(401).json({message: 'Unauthorized. Please try again.'})
                 return;
@@ -40,7 +40,7 @@ const usersControllers = {
             })
             req.session.userToken = token;
             console.log('session', req.session);
-            res.status(200).json({token});
+            res.status(200).json({token, email, password});
 
         } catch (err) {
             console.log(err);
@@ -61,7 +61,7 @@ const usersControllers = {
     async getCurrentUser(req, res) {
         const { currentUserToken } = req.session.userToken;
         try {
-            const currentUser = await User.findOne({ currentUserToken });
+            const currentUser = await User.findOne({ currentUserToken }).select('-__v -admin -password -_id');
             if (!currentUser) {
                 res.status(401).json({ message: "Unauthorized" });
                 return;
