@@ -1,10 +1,20 @@
 const Contacts = require('../../models/contacts');
 
+
 const contactsController = {
     async getContacts(req, res) {
+         const { page = 1, limit = 20 } = req.query;
         try {
-            const data = await Contacts.find()
-            res.status(200).json(data);
+            const contacts = await Contacts.find()
+                .limit(limit * 1)
+                .skip((page - 1) * limit)
+                .exec();
+            const count = await Contacts.countDocuments();
+            res.status(200).json({
+                contacts,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
+            });
         } catch (err) {
             console.log(err);
             res.status(400).json(err);
