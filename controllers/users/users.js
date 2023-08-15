@@ -39,7 +39,7 @@ const usersControllers = {
                 expiresIn: '1h',
             })
             req.session.userToken = token;
-            console.log('session', req.session);
+            console.log('user', req.user);
             res.status(200).json({token, email, password});
 
         } catch (err) {
@@ -61,7 +61,7 @@ const usersControllers = {
     async getCurrentUser(req, res) {
         const { currentUserToken } = req.session.userToken;
         try {
-            const currentUser = await User.findOne({ currentUserToken }).select('-__v -admin -password -_id');
+            const currentUser = await User.findOne({ currentUserToken }).select('-__v -admin -password');
             if (!currentUser) {
                 res.status(401).json({ message: "Unauthorized" });
                 return;
@@ -72,6 +72,24 @@ const usersControllers = {
         } catch (error) {
             
         }
-    }
+    },
+    async updateSubscription(req, res) {
+        try {
+            const { subscription } = req.body;
+            const _id = req.user;
+            const user = await User.findOneAndUpdate(
+                _id,
+                { subscription },
+                { new: true, },
+            );
+            if (!user) {
+                res.status(404).json({message: "Not authorized"})
+            }
+            res.status(200).json({ subscription: user.subscription }) ;
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
 };
 module.exports = usersControllers;

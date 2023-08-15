@@ -14,6 +14,7 @@ const {
     login,
     logout,
     getCurrentUser,
+    updateSubscription,
 } = require('../../controllers/users/users');
 
 //* CONTACT ROUTES
@@ -31,6 +32,6 @@ router.route('/users/signup').post(signup);
 router.route('/users/login').post(login);
 router.route('/users/logout').post(logout);
 router.route('/users/current').get(auth, getCurrentUser);
-router.route('/:userId/users').patch();
+router.route('/users/:userId').patch(auth, updateSubscription);
 
 module.exports = router;
