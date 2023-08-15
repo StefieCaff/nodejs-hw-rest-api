@@ -57,5 +57,21 @@ const usersControllers = {
             res.status(401).json({ message: 'Unauthorized' });
         };
     },
+
+    async getCurrentUser(req, res) {
+        const { currentUserToken } = req.session.userToken;
+        try {
+            const currentUser = await User.findOne({ currentUserToken });
+            if (!currentUser) {
+                res.status(401).json({ message: "Unauthorized" });
+                return;
+            } else {
+                res.status(200).json(currentUser);
+                console.log("body", currentUser);
+            };
+        } catch (error) {
+            
+        }
+    }
 };
 module.exports = usersControllers;

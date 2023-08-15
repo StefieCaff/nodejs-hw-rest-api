@@ -13,6 +13,7 @@ const {
     signup,
     login,
     logout,
+    getCurrentUser,
 } = require('../../controllers/users/users');
 
 //* CONTACT ROUTES
@@ -29,7 +30,7 @@ router.route('/:contactId/favorite').patch(auth, addToFavorites);
 router.route('/users/signup').post(signup);
 router.route('/users/login').post(login);
 router.route('/users/logout').post(logout);
-router.route('/users/current').post();
+router.route('/users/current').get(auth, getCurrentUser);
 router.route('/:userId/users').patch();
 
 module.exports = router;
