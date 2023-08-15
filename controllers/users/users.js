@@ -21,7 +21,7 @@ const usersControllers = {
             res.json(err);
         }
     },
-
+    
     async login(req, res) {
         try {
             const { email, password } = req.body;
@@ -39,7 +39,7 @@ const usersControllers = {
                 expiresIn: '1h',
             })
             req.session.userToken = token;
-            console.log('token', req.session.userToken);
+            console.log('session', req.session);
             res.status(200).json({token});
 
         } catch (err) {
@@ -49,17 +49,12 @@ const usersControllers = {
     },
 
     async logout(req, res) {
-        try {
-            if (req.session.userToken) {
-                req.session.destroy(() => {
-                res.status(204).json({message: "You have been logged out"});
-                })
-            } else {
-                res.status(401).json({message: 'Unauthorized'})
-            }
-        } catch (err) {
-            console.log(err);
-            res.json(err);
+        if (req.session.userToken) {
+            req.session.destroy(() => {
+            res.json({ message: "You have been logged out" });
+            })
+        } else {
+            res.status(401).json({message: 'Unauthorized'})
         };
     },
 };
