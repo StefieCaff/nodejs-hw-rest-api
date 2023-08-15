@@ -28,8 +28,8 @@ router.route('/:contactId/favorite').patch(auth, addToFavorites);
 //* USER ROUTES
 router.route('/users/signup').post(signup);
 router.route('/users/login').post(login);
-router.route('users/logout').post(logout);
-router.route('users/current').post();
+router.route('/users/logout').post(logout);
+router.route('/users/current').post();
 router.route('/:userId/users').patch();
 
 module.exports = router;

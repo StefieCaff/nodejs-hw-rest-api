@@ -54,7 +54,7 @@ const usersControllers = {
             res.json({ message: "You have been logged out" });
             })
         } else {
-            res.status(401).json({message: 'Unauthorized'})
+            res.status(401).json({ message: 'Unauthorized' });
         };
     },
 };
