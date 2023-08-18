@@ -20,6 +20,7 @@ const sess = {
 };
 
 app.use(session(sess));
+app.use(express.static('public'))
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());

@@ -83,6 +83,14 @@ const contactsController = {
             console.log(err);
             res.status(500).json(err);
         }
+    },
+
+    async uploadFile (req, res) {
+        try {
+             res.json(req.body)
+        } catch (err) {
+             console.log(err);
+        }
     }
 };
 
