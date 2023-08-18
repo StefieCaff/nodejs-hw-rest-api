@@ -1,18 +1,26 @@
 const User = require('../../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
 
 const usersControllers = {
     async signup(req, res) {
         try {
-            const { email, password } = req.body;
+            const { email, password, subscription } = req.body;
+            const user = await User.findOne({ email });
+            if (user) {
+              res.status(409).json({message: "Email in use"});
+            };
             const hashedPW = await bcrypt.hash(password, 11);
             const token = jwt.sign({ email }, process.env.JWT_SECRET, {
                 expiresIn: '1h',
             });
+            const urlAvatar = gravatar.url(email);
             const newUser = await User.create({
                 email: email,
-                password: hashedPW
+                password: hashedPW,
+                subscription,
+                avatarURL: urlAvatar,
             })
             req.session.userToken = token;
             res.json(newUser);
@@ -91,5 +99,13 @@ const usersControllers = {
             res.status(500).json(err);
         }
     },
+    async updateAvatar(req, res) {
+        try {
+            console.log("hello");
+        } catch (err) {
+            console.log(err);
+           res.status(401).json({message: "Not authorized"}) 
+        }
+    }
 };
 module.exports = usersControllers;

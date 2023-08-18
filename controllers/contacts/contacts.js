@@ -1,5 +1,5 @@
 const Contacts = require('../../models/contacts');
-
+const gravatar = require('gravatar');
 
 const contactsController = {
     async getContacts(req, res) {

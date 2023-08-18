@@ -34,6 +34,6 @@ router.route('/users/login').post(login);
 router.route('/users/logout').post(logout);
 router.route('/users/current').get(auth, getCurrentUser);
 router.route('/users/:userId').patch(auth, updateSubscription);
-router.route('/avatar').post(uploadFile);
+router.route('/users/avatar').post(auth, uploadFile);
 
 module.exports = router;
