@@ -21,10 +21,6 @@ const UsersSchema = new Schema(
             type: String,
             required: false,
         },
-        owner: {
-            type: Schema.Types.ObjectId,
-            ref: 'user',
-        },
         //! Sytax to remove version key
         // {versionKey: false},
     }

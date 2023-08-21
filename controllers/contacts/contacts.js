@@ -1,5 +1,4 @@
 const Contacts = require('../../models/contacts');
-const gravatar = require('gravatar');
 
 const contactsController = {
     async getContacts(req, res) {
@@ -27,7 +26,9 @@ const contactsController = {
     
     async createContact(req, res) {
         try {
-            const newContact = await Contacts.create(req.body)
+            const { _id: owner } = req.user;
+            const body = req.body;
+            const newContact = await Contacts.create({...body, owner})
             res.status(200).json(newContact);
         } catch (err) {
             console.log(err);

@@ -2,6 +2,12 @@ const User = require('../../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const gravatar = require('gravatar');
+const path = require('path');
+const Jimp = require('jimp');
+const fs = require('fs');
+
+
+const avatarPath = path.join(process.cwd(), '/public/avatars'); //* storage folder for files
 
 const usersControllers = {
     async signup(req, res) {
@@ -101,11 +107,33 @@ const usersControllers = {
     },
     async updateAvatar(req, res) {
         try {
-            console.log("hello");
+            const { _id } = req.user;  
+            const { path: dbPath } = req.file;
+            const fileType = dbPath.split('.')[1];
+            const fileName = path.join(avatarPath, _id, + '.' + fileType)
+            const uploadDir = avatarPath;
+            const uploadPath = path.join(uploadDir, fileName)
+            
+            const avatar = await Jimp.read(dbPath);
+            await avatar.resize(250, 250)
+                .writeAsync(dbPath);
+            
+            await fs.rename(dbPath, uploadPath);
+            
+            const avatarURL = path.join('avatar', fileName);
+
+            const user = await User.findByIdAndUpdate(_id, { avatarURL });
+            if (!user) {
+                res.status(401).json({ message: "Not Authorized" });
+            };
+            res.json({
+                avatarURL: user.avatarURL,
+            })
         } catch (err) {
             console.log(err);
-           res.status(401).json({message: "Not authorized"}) 
-        }
-    }
+            await fs.unlink(req.file.path);
+            res.status(401).json({ message: "Not authorized"})
+        };
+    },
 };
 module.exports = usersControllers;
