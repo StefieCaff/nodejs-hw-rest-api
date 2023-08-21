@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const auth = require('../../utils/auth');
-const upload = require('../../utils/upload');
+
 const {
     getContacts,
     createContact,
@@ -10,16 +10,7 @@ const {
     addToFavorites,
 } = require('../../controllers/contacts/contacts');
 
-const {
-    signup,
-    login,
-    logout,
-    getCurrentUser,
-    updateSubscription,
-    updateAvatar,
-} = require('../../controllers/users/users');
 
-//* CONTACT ROUTES
 router.route('/')
     .get(auth, getContacts)
     .post(auth, createContact);
@@ -28,13 +19,5 @@ router.route('/:contactId')
     .delete(auth, deleteContact)
     .put(auth, updateContact);
 router.route('/:contactId/favorite').patch(auth, addToFavorites);
-
-//* USER ROUTES
-router.route('/users/signup').post(signup);
-router.route('/users/login').post(login);
-router.route('/users/logout').post(logout);
-router.route('/users/current').get(auth, getCurrentUser);
-router.route('/users/:userId').patch(auth, updateSubscription);
-router.route('/users/avatar').patch(auth, upload.single('avatar'), updateAvatar);
 
 module.exports = router;
