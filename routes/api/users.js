@@ -1,3 +1,5 @@
+// something isn't working when i separate out the user routes...
+
 const router = require('express').Router();
 const auth = require('../../utils/auth');
 const upload = require('../../utils/upload');

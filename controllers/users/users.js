@@ -109,9 +109,9 @@ const usersControllers = {
             const { _id } = req.user;  
             const { path: dbPath } = req.file;
             const fileType = dbPath.split('.')[1];
-            const fileName = path.join(avatarPath, _id, + '.' + fileType)
+            const filename = path.join(avatarPath, _id, + '.' + fileType)
             const uploadDir = avatarPath;
-            const uploadPath = path.join(uploadDir, fileName)
+            const uploadPath = path.join(uploadDir, filename)
             
             const avatar = await Jimp.read(dbPath);
             await avatar.resize(250, 250)
@@ -119,7 +119,7 @@ const usersControllers = {
             
             await fs.rename(dbPath, uploadPath);
             
-            const avatarURL = path.join('avatar', fileName);
+            const avatarURL = path.join('avatar', filename);
 
             const user = await User.findByIdAndUpdate(_id, { avatarURL });
             if (!user) {
