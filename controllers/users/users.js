@@ -6,7 +6,6 @@ const path = require('path');
 const Jimp = require('jimp');
 const fs = require('fs');
 
-
 const avatarPath = path.join(process.cwd(), '/public/avatars'); //* storage folder for files
 
 const usersControllers = {
@@ -26,7 +25,7 @@ const usersControllers = {
                 email: email,
                 password: hashedPW,
                 subscription,
-                avatarURL: urlAvatar,
+                avatarURL: urlAvatar + '?d=monsterid',
             })
             req.session.userToken = token;
             res.json(newUser);
