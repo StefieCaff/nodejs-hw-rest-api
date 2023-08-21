@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const auth = require('../../utils/auth');
 const upload = require('../../utils/upload');
+// contacts controller
 const {
     getContacts,
     createContact,
@@ -9,7 +10,7 @@ const {
     updateContact,
     addToFavorites,
 } = require('../../controllers/contacts/contacts');
-
+// users controller
 const {
     signup,
     login,
