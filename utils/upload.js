@@ -1,21 +1,22 @@
 const multer = require('multer');
 const path = require('path');
 
-const uploadPath = path.join(process.cwd(), 'tmp'); //* check/validation folder
+const tmpDir = path.join(__dirname, "../", "tmp");
 
-const storage = multer.diskStorage({
+const multerConfig = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, uploadPath);
+        cb(null, tmpDir);
     },
     filename: (req, file, cb) => {
-      cb(null, file.originalname);
+        cb(null, file.originalname);
     },
+    limits: {
+        fileSize: 2048
+    }
 });
 
 const upload = multer({
-    storage: storage,
-    limits: {
-    fileSize: 1048576, // 1MB
-    },
+    storage: multerConfig
 });
+
 module.exports = upload;
