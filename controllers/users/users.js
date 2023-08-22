@@ -6,8 +6,8 @@ const path = require('path');
 const Jimp = require('jimp');
 const fs = require('fs');
 
-const avatarPath = path.join(process.cwd(), '/public/avatars'); //* storage folder for files
-
+const avatarPath = path.join(__dirname, "../../", 'public/avatars'); //* storage folder for files
+console.log(avatarPath)
 const usersControllers = {
     async signup(req, res) {
         try {
