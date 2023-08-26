@@ -32,7 +32,7 @@ const usersControllers = {
             console.log(newUser._id);
             req.session.userToken = token
             req.session.userId = newUser._id
-            res.json(newUser);
+            res.json({token});
         } catch (err) {
             console.log(err);
             res.json(err);
@@ -57,7 +57,7 @@ const usersControllers = {
             });
             req.session.userToken = token;
             req.session.userId = validUser._id;
-            res.status(200).json({token, email, password});
+            res.status(200).json({token});
 
         } catch (err) {
             console.log(err);
@@ -110,29 +110,28 @@ const usersControllers = {
     },
     async updateAvatar(req, res) {
         try {
+            const _id = req.user;
+            const { path: dbPath } = req.file;
+            const fileType = dbPath.split('.')[1];
+            const filename = path.join(avatarPath, _id, + '.' + fileType)
+            const uploadDir = avatarPath;
+            const uploadPath = path.join(uploadDir, filename)
             
+            const avatar = await Jimp.read(dbPath);
+            await avatar.resize(250, 250)
+                .writeAsync(dbPath);
             
-            // const { path: dbPath } = req.file;
-            // const fileType = dbPath.split('.')[1];
-            // const filename = path.join(avatarPath, _id, + '.' + fileType)
-            // const uploadDir = avatarPath;
-            // const uploadPath = path.join(uploadDir, filename)
+            await fs.rename(dbPath, uploadPath);
             
-            // const avatar = await Jimp.read(dbPath);
-            // await avatar.resize(250, 250)
-            //     .writeAsync(dbPath);
-            
-            // await fs.rename(dbPath, uploadPath);
-            
-            // const avatarURL = path.join('avatar', filename);
+            const avatarURL = path.join('avatar', filename);
 
-            // const user = await User.findByIdAndUpdate(_id, { avatarURL });
-            // if (!user) {
-            //     res.status(401).json({ message: "Not Authorized" });
-            // };
-            // res.json({
-            //     avatarURL: user.avatarURL,
-            // })
+            const user = await User.findByIdAndUpdate(_id, { avatarURL });
+            if (!user) {
+                res.status(401).json({ message: "Not Authorized" });
+            };
+            res.json({
+                avatarURL: user.avatarURL,
+            })
             res.json(req.body)
         } catch (err) {
             console.log(err);
