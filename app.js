@@ -3,7 +3,7 @@ const session = require('express-session');
 const logger = require('morgan');
 const cors = require('cors');
 require('dotenv').config();
-const contactsRouter = require('./routes/api/contacts')
+const contactsRouter = require('./routes/api/routes')
 const app = express()
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 

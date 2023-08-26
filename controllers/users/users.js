@@ -8,10 +8,11 @@ const fs = require('fs');
 
 const avatarPath = path.join(__dirname, "../../", 'public/avatars'); //* storage folder for files
 console.log(avatarPath)
+
 const usersControllers = {
     async signup(req, res) {
         try {
-            const { email, password, subscription } = req.body;
+            const { email, password, subscription} = req.body;
             const user = await User.findOne({ email });
             if (user) {
               res.status(409).json({message: "Email in use"});
@@ -20,15 +21,18 @@ const usersControllers = {
             const token = jwt.sign({ email }, process.env.JWT_SECRET, {
                 expiresIn: '1h',
             });
+            
             const urlAvatar = gravatar.url(email);
             const newUser = await User.create({
                 email: email,
                 password: hashedPW,
                 subscription,
-                avatarURL: urlAvatar + '?d=monsterid',
-            })
-            req.session.userToken = token;
-            res.json(newUser);
+                avatarURL: urlAvatar + '?d=monsterid'
+            });
+            console.log(newUser);
+            req.session.userToken = token
+            req.session.userId = user._id
+            res.json(user);
         } catch (err) {
             console.log(err);
             res.json(err);
@@ -42,7 +46,7 @@ const usersControllers = {
             if (!validUser) {
                 res.status(401).json({message: 'Unauthorized. Please try again.'})
                 return;
-            }
+            };
             const validatePW = await validUser.comparePassword( password );
             if (!validatePW) {
                 res.status(400).json({ message: 'Invalid password. Please check your password and try again.' });
@@ -50,9 +54,9 @@ const usersControllers = {
             };
             const token = jwt.sign({ email }, process.env.JWT_SECRET, {
                 expiresIn: '1h',
-            })
+            });
             req.session.userToken = token;
-            console.log('user', req.user);
+            req.session.userId = validUser._id;
             res.status(200).json({token, email, password});
 
         } catch (err) {
@@ -106,28 +110,30 @@ const usersControllers = {
     },
     async updateAvatar(req, res) {
         try {
-            const { _id } = req.user;  
-            const { path: dbPath } = req.file;
-            const fileType = dbPath.split('.')[1];
-            const filename = path.join(avatarPath, _id, + '.' + fileType)
-            const uploadDir = avatarPath;
-            const uploadPath = path.join(uploadDir, filename)
             
-            const avatar = await Jimp.read(dbPath);
-            await avatar.resize(250, 250)
-                .writeAsync(dbPath);
             
-            await fs.rename(dbPath, uploadPath);
+            // const { path: dbPath } = req.file;
+            // const fileType = dbPath.split('.')[1];
+            // const filename = path.join(avatarPath, _id, + '.' + fileType)
+            // const uploadDir = avatarPath;
+            // const uploadPath = path.join(uploadDir, filename)
             
-            const avatarURL = path.join('avatar', filename);
+            // const avatar = await Jimp.read(dbPath);
+            // await avatar.resize(250, 250)
+            //     .writeAsync(dbPath);
+            
+            // await fs.rename(dbPath, uploadPath);
+            
+            // const avatarURL = path.join('avatar', filename);
 
-            const user = await User.findByIdAndUpdate(_id, { avatarURL });
-            if (!user) {
-                res.status(401).json({ message: "Not Authorized" });
-            };
-            res.json({
-                avatarURL: user.avatarURL,
-            })
+            // const user = await User.findByIdAndUpdate(_id, { avatarURL });
+            // if (!user) {
+            //     res.status(401).json({ message: "Not Authorized" });
+            // };
+            // res.json({
+            //     avatarURL: user.avatarURL,
+            // })
+            res.json(req.body)
         } catch (err) {
             console.log(err);
             await fs.unlink(req.file.path);

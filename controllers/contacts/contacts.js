@@ -1,5 +1,6 @@
 const Contacts = require('../../models/contacts');
 
+
 const contactsController = {
     async getContacts(req, res) {
         const { page = 1, limit = 20, favorite } = req.query;
@@ -23,12 +24,10 @@ const contactsController = {
             res.status(400).json(err);
         }
     },
-    
+
     async createContact(req, res) {
         try {
-            const { _id: owner } = req.user;
-            const body = req.body;
-            const newContact = await Contacts.create({...body, owner})
+            const newContact = await Contacts.create({...req.body, owner: req.session.userId})
             res.status(200).json(newContact);
         } catch (err) {
             console.log(err);
