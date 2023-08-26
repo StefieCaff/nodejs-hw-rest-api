@@ -29,10 +29,10 @@ const usersControllers = {
                 subscription,
                 avatarURL: urlAvatar + '?d=monsterid'
             });
-            console.log(newUser);
+            console.log(newUser._id);
             req.session.userToken = token
-            req.session.userId = user._id
-            res.json(user);
+            req.session.userId = newUser._id
+            res.json(newUser);
         } catch (err) {
             console.log(err);
             res.json(err);
