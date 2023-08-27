@@ -110,31 +110,30 @@ const usersControllers = {
     },
     async updateAvatar(req, res) {
         try {
+            const { currentUserToken } = req.session.userToken;
             const _id = req.session.userId;
             const { path: dbPath } = req.file;
             const fileType = dbPath.split('.')[1];
-            const filename = path.join(`${avatarPath}${_id}.${fileType}`)
             
-            const uploadDir = avatarPath;
-           
-            const uploadPath = path.join(uploadDir, filename)
-            
+            const fileName = path.join(`${avatarPath}${_id}.${fileType}`)
+            //const uploadDir = avatarPath;
+            //const uploadPath = path.join(uploadDir, fileName)
             const avatar = await Jimp.read(dbPath);
             await avatar.resize(250, 250)
                 .writeAsync(dbPath);
             
-            await fs.rename(dbPath, uploadPath);
+            await fs.rename(dbPath, fileName);
             
-            const avatarURL = path.join('avatar', filename);
+            const avatarURL = path.join('avatar', fileName);
 
-            const user = await User.findByIdAndUpdate(_id, { avatarURL });
+            const user = await User.findOneAndUpdate({currentUserToken}, { avatarURL });
             if (!user) {
                 res.status(401).json({ message: "Not Authorized" });
             };
             res.json({
                 avatarURL: user.avatarURL,
             })
-
+            
         } catch (err) {
             console.log(err);
             await fs.unlink(req.file.path);
