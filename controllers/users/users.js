@@ -110,11 +110,13 @@ const usersControllers = {
     },
     async updateAvatar(req, res) {
         try {
-            const _id = req.user;
+            const _id = req.session.userId;
             const { path: dbPath } = req.file;
             const fileType = dbPath.split('.')[1];
-            const filename = path.join(avatarPath, _id, + '.' + fileType)
+            const filename = path.join(`${avatarPath}${_id}.${fileType}`)
+            
             const uploadDir = avatarPath;
+           
             const uploadPath = path.join(uploadDir, filename)
             
             const avatar = await Jimp.read(dbPath);
@@ -132,7 +134,7 @@ const usersControllers = {
             res.json({
                 avatarURL: user.avatarURL,
             })
-            res.json(req.body)
+
         } catch (err) {
             console.log(err);
             await fs.unlink(req.file.path);
