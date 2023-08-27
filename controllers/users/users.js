@@ -110,34 +110,37 @@ const usersControllers = {
     },
     async updateAvatar(req, res) {
         try {
-            const { currentUserToken } = req.session.userToken;
-            const _id = req.session.userId;
-            const { path: dbPath } = req.file;
-            const fileType = dbPath.split('.')[1];
+            console.log("req.file:", req.file); // Log the uploaded file information
             
-            const fileName = path.join(`${avatarPath}${_id}.${fileType}`)
-            //const uploadDir = avatarPath;
-            //const uploadPath = path.join(uploadDir, fileName)
-            const avatar = await Jimp.read(dbPath);
-            await avatar.resize(250, 250)
-                .writeAsync(dbPath);
+            const _id = req.session.userId; // Get the user's ID from the session
+            const { path: tempPath, mimetype } = req.file; // Extract the temporary file path and mimetype from the request file
+            const fileType = mimetype.split("/")[1]; // Extract the file type (extension) from the mimetype
+            const fileName = path.join(avatarPath, `${_id}.${fileType}`); // Create the full path for the new avatar file
+           
+            const avatar = await Jimp.read(tempPath); // Read the temporary uploaded file using Jimp
+            await avatar.resize(250, 250) // Resize the image to 250x250 pixels and save it with the calculated file name
+                .writeAsync(fileName);
+            await fs.promises.unlink(tempPath); // Delete the temporary uploaded file
+            await fs.rename(tempPath, fileName);
             
-            await fs.rename(dbPath, fileName);
+            const avatarURL = path.join("/avatars", `${_id}.${fileType}`); // Create the URL for the avatar
             
-            const avatarURL = path.join('avatar', fileName);
-
-            const user = await User.findOneAndUpdate({currentUserToken}, { avatarURL });
+            // Update the user's avatarURL in the database
+            const user = await User.findByIdAndUpdate(
+                { _id },
+                { avatarURL },
+                 {new: true, }
+            );
             if (!user) {
-                res.status(401).json({ message: "Not Authorized" });
+                res.status(401).json({ message: "Not Authorized" }); // If user is not found, return an unauthorized status
             };
             res.json({
-                avatarURL: user.avatarURL,
+                avatarURL: user.avatarURL,  // Respond with the updated avatar URL
             })
             
         } catch (err) {
             console.log(err);
-            await fs.unlink(req.file.path);
-            res.status(401).json({ message: "Not authorized"})
+            res.status(500).json({ message: "Error updating avatar"})
         };
     },
 };
