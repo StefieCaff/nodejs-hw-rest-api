@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const gravatar = require('gravatar');
 const path = require('path');
 const fs = require('fs');
+const Jimp = require('jimp');
+
 const resizeImageToMaxSize = require('../../utils/resize-avatar');
 
 const avatarPath = path.join(__dirname, "../../", 'public/avatars'); //* storage folder for files
@@ -118,12 +120,13 @@ const usersControllers = {
             const fileName = path.join(avatarPath, `${_id}.${fileType}`); // Create the full path for the new avatar file
             
             console.log("paths", tempPath, fileName)
-            // const avatar = await Jimp.read(tempPath); // Read the temporary uploaded file using Jimp
+             
             // await avatar.resize(250, 250).writeAsync(fileName); // Resize the image to 250x250 pixels and save it with the calculated file name
 
             try {
-               await resizeImageToMaxSize(tempPath, fileName, (1024*1024)); // Read the temporary uploaded file using Jimp
-            
+            const avatar = await Jimp.read(tempPath); // Read the temporary uploaded file using Jimp
+               await resizeImageToMaxSize(tempPath, fileName, (1024*1024)); 
+               await avatar.writeAsync(fileName)
             } catch (jimpError) {
                 console.error('Jimp Error:', jimpError);
                 res.status(500).json({ message: 'Error processing avatar' });
