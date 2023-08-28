@@ -6,7 +6,8 @@
     "start": "cross-env NODE_ENV=production node ./server.js",
     "dev": "cross-env NODE_ENV=development nodemon ./server.js",
     "lint": "eslint **/*.js",
-    "lint:fix": "eslint --fix **/*.js"
+    "lint:fix": "eslint --fix **/*.js",
+    "email": "cross-env NODE_ENV=development node ./utils/nodemailer.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -19,7 +20,8 @@
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.4.2",
     "morgan": "1.10.0",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.4"
   },
   "devDependencies": {
     "dotenv": "^16.3.1",
