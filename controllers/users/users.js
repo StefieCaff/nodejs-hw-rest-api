@@ -125,8 +125,9 @@ const usersControllers = {
 
             try {
             const avatar = await Jimp.read(tempPath); // Read the temporary uploaded file using Jimp
-               await resizeImageToMaxSize(tempPath, fileName, (1024*1024)); 
-               await avatar.writeAsync(fileName)
+                await resizeImageToMaxSize(tempPath, fileName, (1024 * 1024));
+                await avatar.resize(250, 250); 
+                await avatar.writeAsync(fileName);
             } catch (jimpError) {
                 console.error('Jimp Error:', jimpError);
                 res.status(500).json({ message: 'Error processing avatar' });
