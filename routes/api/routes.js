@@ -18,6 +18,7 @@ const {
     getCurrentUser,
     updateSubscription,
     updateAvatar,
+    authorizeEmail,
 } = require('../../controllers/users/users');
 
 //* CONTACT ROUTES
@@ -37,5 +38,5 @@ router.route('/users/logout').post(logout);
 router.route('/users/current').get(auth, getCurrentUser);
 router.route('/users/subscription/:userId').patch(auth, updateSubscription);
 router.route('/users/avatar').patch(auth, upload.single('avatar'), updateAvatar);
-
+router.route('/users/verify/:verificationToken').get(auth, authorizeEmail);
 module.exports = router;

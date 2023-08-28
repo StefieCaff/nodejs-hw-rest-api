@@ -5,6 +5,7 @@ const gravatar = require('gravatar');
 const path = require('path');
 const fs = require('fs');
 const Jimp = require('jimp');
+const nanoid = require('nanoid');
 
 const resizeImageToMaxSize = require('../../utils/resize-avatar');
 
@@ -14,6 +15,7 @@ console.log(avatarPath)
 const usersControllers = {
     async signup(req, res) {
         try {
+            const validationToken = nanoid.nanoid(10);
             const { email, password, subscription} = req.body;
             const user = await User.findOne({ email });
             if (user) {
@@ -29,18 +31,18 @@ const usersControllers = {
                 email: email,
                 password: hashedPW,
                 subscription,
-                avatarURL: urlAvatar + '?d=monsterid'
+                avatarURL: urlAvatar + '?d=monsterid',
+                validationToken,
             });
-            console.log(newUser._id);
-            req.session.userToken = token
-            req.session.userId = newUser._id
-            res.json({token});
+            req.session.userToken = token;
+            req.session.userId = newUser._id;
+            req.session.validationToken = validationToken;
+            res.json({ token, validationToken});
         } catch (err) {
             console.log(err);
             res.json(err);
         }
     },
-    
     async login(req, res) {
         try {
             const { email, password } = req.body;
@@ -76,7 +78,18 @@ const usersControllers = {
             res.status(401).json({ message: 'Unauthorized' });
         };
     },
-
+    async authorizeEmail(req, res) {
+        const { validationToken } = req.session.validationToken;
+        const validatedUser = await User.findOne({ validationToken });
+        try {
+            !validatedUser
+                ? res.status(404).json({ message: "User not found" })
+                : res.status(200).json({ message: "Verification successful" });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }  
+    },
     async getCurrentUser(req, res) {
         const { currentUserToken } = req.session.userToken;
         try {
@@ -88,8 +101,9 @@ const usersControllers = {
                 res.status(200).json(currentUser);
                 console.log("body", currentUser);
             };
-        } catch (error) {
-            
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
         }
     },
     async updateSubscription(req, res) {

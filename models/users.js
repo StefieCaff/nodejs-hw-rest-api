@@ -21,6 +21,14 @@ const UsersSchema = new Schema(
             type: String,
             required: false,
         },
+        verify: {
+            type: Boolean,
+            default: false,
+        },
+        verificationToken: {
+            type: String,
+            required: [true, 'Verify token is required'],
+        },
         //! Sytax to remove version key
         // {versionKey: false},
     }
