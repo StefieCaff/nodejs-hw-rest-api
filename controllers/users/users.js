@@ -39,7 +39,7 @@ const usersControllers = {
             req.session.validationToken = validationToken;
             res.json({ token, validationToken});
         } catch (err) {
-            console.log(err);
+            console.log('Error signing up user:', err);
             res.json(err);
         }
     },
@@ -64,7 +64,7 @@ const usersControllers = {
             res.status(200).json({token});
 
         } catch (err) {
-            console.log(err);
+            console.log('Error logging in user:', err);
             res.json(err);
         }
     },
@@ -75,18 +75,26 @@ const usersControllers = {
             res.json({ message: "You have been logged out" });
             })
         } else {
+            console.log('Error logging out user');
             res.status(401).json({ message: 'Unauthorized' });
         };
     },
-    async authorizeEmail(req, res) {
-        const { validationToken } = req.session.validationToken;
-        const validatedUser = await User.findOne({ validationToken });
+    async verifyUser(req, res) {
+        const { verificationToken } = req.params.verificationToken;
+        const verifiedUser = await User.findOneAndUpdate(
+            { verificationToken },
+            {
+                verificationToken: null,
+                verify: true,
+            },
+            {new: true}
+        );
         try {
-            !validatedUser
+            !verifiedUser
                 ? res.status(404).json({ message: "User not found" })
                 : res.status(200).json({ message: "Verification successful" });
         } catch (err) {
-            console.log(err);
+            console.log('Error verifying user:', err);
             res.status(500).json(err);
         }  
     },
@@ -102,7 +110,7 @@ const usersControllers = {
                 console.log("body", currentUser);
             };
         } catch (err) {
-            console.log(err);
+            console.log('Error finding user:', err);
             res.status(500).json(err);
         }
     },
@@ -120,7 +128,7 @@ const usersControllers = {
             }
             res.status(200).json({ subscription: user.subscription }) ;
         } catch (err) {
-            console.log(err);
+            console.log('Error updating user:', err);
             res.status(500).json(err);
         }
     },
@@ -164,7 +172,7 @@ const usersControllers = {
             })
             
         } catch (err) {
-            console.log(err);
+            console.log('Error updating avatar:', err);
             res.status(500).json({ message: "Error updating avatar" });
             return;
         };
