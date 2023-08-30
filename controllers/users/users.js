@@ -40,7 +40,7 @@ const usersControllers = {
             await newUser.save();
             req.session.userToken = token;
             req.session.userId = newUser._id;
-            req.session.validationToken = verificationToken;
+            req.session.verificationToken = verificationToken;
             res.json({ token, verificationToken });
             await sendVerificationEmail(email, verificationToken);
         } catch (err) {
@@ -57,7 +57,7 @@ const usersControllers = {
                 
             };
             if (!validUser.verify) {
-                 return res.status(403).json({ error: 'Email not verified' });
+                return res.status(403).json({ error: 'Email not verified' });
             }
             const validatePW = await validUser.comparePassword( password );
                 if (!validatePW) {
@@ -87,7 +87,7 @@ const usersControllers = {
         };
     },
     async verifyUser(req, res) {
-        const { verificationToken } = req.params.verificationToken;
+        const verificationToken = req.params.verificationToken;
         const verifiedUser = await User.findOneAndUpdate(
             { verificationToken },
             {
@@ -105,8 +105,28 @@ const usersControllers = {
             res.status(500).json(err);
         }  
     },
+    async reSendVerificationEmail(req, res) {
+        const email = req.body
+        try {
+            const user = await User.findOne({ email });
+            if (!user) {
+                res.status(400).json({ message: 'User not found, please signup with your email'})
+            };
+            if (user.verified) {
+                return res.status(400).json({ message: 'Verification has already been passed' });
+            };
+            const verificationToken = nanoid.nanoid(10);
+            req.session.verificationToken = verificationToken;
+            res.json({ verificationToken });
+            await sendVerificationEmail(email, verificationToken);
+
+      } catch (err) {
+        console.error('Error verifying user:', err);
+            res.status(500).json({ message: 'Internal server error' });
+      }  
+    },
     async getCurrentUser(req, res) {
-        const { currentUserToken } = req.session.userToken;
+        const currentUserToken = req.session.userToken;
         try {
             const currentUser = await User.findOne({ currentUserToken }).select('-__v -admin -password');
             if (!currentUser) {

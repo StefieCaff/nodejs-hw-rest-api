@@ -20,6 +20,7 @@ const {
     updateAvatar,
     authorizeEmail,
     verifyUser,
+    reSendVerificationEmail,
 } = require('../../controllers/users/users');
 
 //* CONTACT ROUTES
@@ -41,4 +42,5 @@ router.route('/users/subscription/:userId').patch(auth, updateSubscription);
 router.route('/users/avatar').patch(auth, upload.single('avatar'), updateAvatar);
 router.route('/users/verify/:verificationToken').get(auth, verifyUser);
 router.route('/auth/verify/:verificationToken').get(auth, verifyUser);
+router.route('/users/verify').post(reSendVerificationEmail);
 module.exports = router;
