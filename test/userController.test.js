@@ -1,4 +1,4 @@
-// eslint-disable-next-line jest/no-standalone-expect
+
 // external
 const jwt = require('jsonwebtoken'); 
 
@@ -6,5 +6,25 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 const userController = require('../controllers/users/users');
 
-jest.mock('jsonwebtoken')
+// eslint-disable-next-line no-undef
+jest.mock('jsonwebtoken');
+// eslint-disable-next-line no-undef
+jest.mock('../models/users');
+
+describe('loginController', () => {
+    
+const req = {
+            body: {
+                email: 'test@example.com',
+                password: 'testpassword',
+            },
+    session: {},
+};
+const res = {
+    status: jest.fn(() => res),
+    json: jest.fn(),
+};
+
+})
+
 
