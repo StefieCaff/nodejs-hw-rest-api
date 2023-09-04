@@ -6,13 +6,11 @@ const gravatar = require('gravatar');
 const path = require('path');
 const fs = require('fs');
 const Jimp = require('jimp');
-const nanoid = require('nanoid');
+const { nanoid } = require('nanoid');
 // internal
 const resizeImageToMaxSize = require('../../utils/resize-avatar');
 const sendVerificationEmail = require('../../utils/nodemailer');
-
 const avatarPath = path.join(__dirname, "../../", 'public/avatars'); //* storage folder for files
-console.log(avatarPath)
 
 const usersControllers = {
     async signup(req, res) {
@@ -50,7 +48,7 @@ const usersControllers = {
     },
     async login(req, res) {
         try {
-            const { email, password } = req.body;
+            const { email, password, subscription } = req.body;
             const validUser = await User.findOne({ email });
             if (!validUser) {
                 return res.status(401).json({message: 'User not found.'})
@@ -68,10 +66,10 @@ const usersControllers = {
             });
             req.session.userToken = token;
             req.session.userId = validUser._id;
-            res.status(200).json({token});
-
+            res.status(200).json({email: email, subscription: subscription });
+            res.json({ token });
         } catch (err) {
-            console.error('Error logging in user:', err);
+            console.log('Error logging in user:', err);
             res.json(err);
         }
     },
